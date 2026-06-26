@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Marketing Phan Gia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#08080f;--bg2:#0f0f18;--bg3:#14141e;
+  --card:#181824;--card2:#1c1c2a;--card3:#202030;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.12);--bdr3:rgba(255,255,255,.2);
+  --txt:#eeeef8;--mt:#7878a0;--mt2:#50506a;
+  --blue:#5090f8;--green:#28d880;--red:#f76050;
+  --yellow:#f7c840;--purple:#a07ff8;--teal:#28ccd8;
+  --pink:#f87fb8;--orange:#f89050;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:13px;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px}
+
+/* SIDEBAR */
+.sb{position:fixed;top:0;left:0;width:210px;height:100vh;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;z-index:200}
+.sb-logo{padding:16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px}
+.sb-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-name{font-size:13px;font-weight:700;letter-spacing:-.3px}
+.sb-ver{font-size:9px;color:var(--mt);margin-top:1px}
+.sb-nav{padding:8px 6px;flex:1;overflow-y:auto}
+.sb-grp{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mt2);padding:10px 8px 4px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;transition:all .18s;color:var(--mt);font-size:12px;font-weight:500;border:none;background:none;width:100%;text-align:left;white-space:nowrap}
+.sb-item:hover{background:rgba(255,255,255,.04);color:var(--txt)}
+.sb-item.on{background:rgba(80,144,248,.12);color:var(--blue)}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-foot{padding:10px;border-top:1px solid var(--bdr);font-size:9px;color:var(--mt);text-align:center}
+
+/* MAIN */
+.main{margin-left:210px;min-height:100vh;position:relative;z-index:1}
+.bar{position:sticky;top:0;z-index:100;overflow:hidden;background:rgba(8,8,15,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--bdr);padding:10px 22px;display:flex;align-items:center;justify-content:space-between}
+.bar-l .bar-title{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.bar-l .bar-sub{font-size:10px;color:var(--mt);margin-top:1px}
+.bar-r{display:flex;align-items:center;gap:8px}
+.m-sel{padding:5px 10px;border-radius:6px;font-size:11px;border:1px solid var(--bdr2);background:var(--bg3);color:var(--txt);outline:none;cursor:pointer}
+.btn-sm{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--bg3);color:var(--mt);font-family:inherit;transition:all .18s}
+.btn-sm:hover{color:var(--txt);border-color:var(--bdr2)}
+.btn-edit{background:rgba(80,144,248,.1);border-color:rgba(80,144,248,.3);color:var(--blue)}
+.btn-edit:hover{background:rgba(80,144,248,.18)}
+.pill-live{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:rgba(40,216,128,.1);color:var(--green);font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* CONTENT */
+.body{padding:18px 22px}
+.sec{margin-bottom:24px}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.sec-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:10px}
+.tag-b{background:rgba(80,144,248,.14);color:var(--blue)}
+.tag-g{background:rgba(40,216,128,.12);color:var(--green)}
+.tag-r{background:rgba(247,96,80,.12);color:var(--red)}
+.tag-p{background:rgba(160,127,248,.12);color:var(--purple)}
+.tag-t{background:rgba(40,204,216,.12);color:var(--teal)}
+.tag-pk{background:rgba(248,127,184,.12);color:var(--pink)}
+
+/* OVERVIEW */
+.ov-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:16px}
+.ov-card{background:var(--card);border:1px solid var(--bdr);border-radius:9px;padding:11px 10px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.ov-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.ov-card:hover{border-color:var(--bdr2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.ov-nm{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--mt);margin-bottom:6px}
+.ov-val{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;margin-bottom:2px;transition:color .3s}
+.ov-lbl{font-size:9px;color:var(--mt);margin-bottom:5px}
+.ov-chg{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:1px 5px;border-radius:8px}
+.up{background:rgba(40,216,128,.12);color:var(--green)}
+.dn{background:rgba(247,96,80,.12);color:var(--red)}
+.neu{background:rgba(120,120,160,.1);color:var(--mt)}
+.ov-fp::before{background:#1877f2}
+.ov-fb::before{background:linear-gradient(90deg,#1877f2,#e34bbb)}
+.ov-gg::before{background:linear-gradient(90deg,#4285f4,#34a853)}
+.ov-seo::before{background:var(--green)}
+.ov-tka::before{background:#ff0050}
+.ov-tko::before{background:linear-gradient(90deg,#ff0050,#00f2ea)}
+.ov-yt::before{background:#ff0000}
+.ov-web::before{background:var(--purple)}
+
+/* METRIC CARDS */
+.mg{display:grid;gap:8px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.mc{background:var(--card);border:1px solid var(--bdr);border-radius:9px;padding:13px 15px;position:relative;transition:all .2s;cursor:pointer}
+.mc:hover{border-color:var(--bdr2);background:var(--card2)}
+.mc:hover .mc-edit{opacity:1}
+.mc-edit{position:absolute;top:8px;right:8px;font-size:9px;color:var(--mt2);background:var(--bg3);border:1px solid var(--bdr);padding:2px 6px;border-radius:4px;opacity:0;transition:opacity .15s;pointer-events:none}
+.mc-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--mt);margin-bottom:5px}
+.mc-val{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;line-height:1;margin-bottom:3px;transition:color .3s}
+.mc-sub{font-size:11px;color:var(--mt);margin-bottom:6px}
+.mc-bdg{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
+.mc-bar{width:100%;height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:7px}
+.mc-bar-f{height:100%;border-radius:2px;transition:width .9s ease}
+
+/* CHART */
+.cr{display:grid;gap:10px}
+.c64{grid-template-columns:1.6fr 1fr}
+.c46{grid-template-columns:1fr 1.6fr}
+.cc{background:var(--card);border:1px solid var(--bdr);border-radius:9px;padding:14px}
+.cc-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.cc-t{font-size:12px;font-weight:600;color:var(--txt)}
+.cc-s{font-size:10px;color:var(--mt);margin-top:1px}
+
+/* TABLE */
+.dt{width:100%;border-collapse:collapse}
+.dt th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mt2);padding:0 0 7px;text-align:left;border-bottom:1px solid var(--bdr)}
+.dt td{padding:7px 0;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--txt);vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}
+.mn{font-family:'Space Mono',monospace;font-size:11px}
+
+/* FUNNEL */
+.fn-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bdr)}
+.fn-row:last-child{border-bottom:none}
+.fn-lbl{font-size:11px;color:var(--mt);width:100px;flex-shrink:0}
+.fn-bar{flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:3px}
+.fn-fill{height:100%;border-radius:3px;transition:width 1s}
+.fn-val{font-family:'Space Mono',monospace;font-size:10px;color:var(--txt);width:80px;text-align:right;flex-shrink:0}
+
+hr.dv{border:none;border-top:1px solid var(--bdr);margin:4px 0 16px}
+
+/* TICKER */
+.tk{transition:color .3s}
+.fg{color:var(--green)!important}
+.fr{color:var(--red)!important}
+
+/* ═══ EDIT MODAL ═══ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--card2);border:1px solid var(--bdr2);border-radius:14px;padding:0;width:560px;max-width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-hd{padding:18px 22px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.modal-cls{background:none;border:none;color:var(--mt);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:5px;transition:all .18s}
+.modal-cls:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1}
+.modal-sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mt2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:10px;font-weight:600;color:var(--mt);letter-spacing:.3px;text-transform:uppercase}
+.field input,.field select{background:var(--bg3);border:1px solid var(--bdr2);border-radius:7px;padding:7px 10px;color:var(--txt);font-size:12px;font-family:'Space Mono',monospace;transition:border-color .18s;outline:none}
+.field input:focus,.field select:focus{border-color:var(--blue)}
+.field input::placeholder{color:var(--mt2);font-size:11px}
+.modal-ft{padding:14px 22px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.btn-save{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-family:inherit;transition:opacity .18s}
+.btn-save:hover{opacity:.88}
+.btn-cancel{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.05);border:1px solid var(--bdr2);color:var(--mt);font-family:inherit;transition:all .18s}
+.btn-cancel:hover{color:var(--txt)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card2);border:1px solid rgba(40,216,128,.3);color:var(--green);padding:10px 16px;border-radius:9px;font-size:12px;font-weight:600;z-index:3000;transform:translateY(60px);opacity:0;transition:all .32s;pointer-events:none;display:flex;align-items:center;gap:7px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* BAR ROWS */
+.bw{width:80px;height:4px;background:rgba(255,255,255,.05);border-radius:2px;display:inline-block}
+.bf{height:100%;border-radius:2px}
+
+/* ══ HIỆU ỨNG NÂNG CAO ══ */
+
+/* Particles canvas */
+#particles-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.35}
+.sb{position:fixed;z-index:200}
+
+/* Glow pulse trên logo */
+.sb-icon{
+  animation:iconPulse 3s ease-in-out infinite;
+  box-shadow:0 0 0 0 rgba(80,144,248,.4);
+}
+@keyframes iconPulse{
+  0%{box-shadow:0 0 0 0 rgba(80,144,248,.4)}
+  70%{box-shadow:0 0 0 10px rgba(80,144,248,0)}
+  100%{box-shadow:0 0 0 0 rgba(80,144,248,0)}
+}
+
+/* Số đếm animate khi load */
+.mc-val{transition:all .6s cubic-bezier(.34,1.56,.64,1)}
+
+/* Overview card glow khi hover */
+.ov-card:hover{
+  box-shadow:0 0 20px rgba(80,144,248,.15),0 8px 32px rgba(0,0,0,.4);
+}
+.ov-fp:hover{box-shadow:0 0 20px rgba(24,119,242,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-fb:hover{box-shadow:0 0 20px rgba(227,75,187,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-gg:hover{box-shadow:0 0 20px rgba(52,168,83,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-seo:hover{box-shadow:0 0 20px rgba(40,216,128,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-tka:hover{box-shadow:0 0 20px rgba(255,0,80,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-tko:hover{box-shadow:0 0 20px rgba(248,127,184,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-yt:hover{box-shadow:0 0 20px rgba(255,0,0,.2),0 8px 32px rgba(0,0,0,.4)}
+.ov-web:hover{box-shadow:0 0 20px rgba(160,127,248,.2),0 8px 32px rgba(0,0,0,.4)}
+
+/* Metric card glow */
+.mc:hover{
+  box-shadow:0 0 16px rgba(80,144,248,.1),0 4px 20px rgba(0,0,0,.3);
+}
+
+/* Live dot thở */
+.dot-live{
+  box-shadow:0 0 0 0 rgba(40,216,128,.6);
+  animation:livePulse 1.4s infinite;
+}
+@keyframes livePulse{
+  0%{opacity:1;box-shadow:0 0 0 0 rgba(40,216,128,.6)}
+  70%{opacity:.4;box-shadow:0 0 0 6px rgba(40,216,128,0)}
+  100%{opacity:1;box-shadow:0 0 0 0 rgba(40,216,128,0)}
+}
+
+/* Topbar shimmer */
+.bar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(80,144,248,.4),rgba(160,127,248,.4),transparent);
+  animation:shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer{0%,100%{opacity:0;transform:scaleX(.3)}50%{opacity:1;transform:scaleX(1)}}
+
+/* Section header accent */
+.sec-title::before{
+  content:'';display:inline-block;width:3px;height:14px;border-radius:2px;
+  background:linear-gradient(180deg,var(--blue),var(--purple));
+  margin-right:6px;flex-shrink:0;vertical-align:middle;
+}
+
+/* Số ticker flash đẹp hơn */
+@keyframes flashGreen{0%{color:var(--green);text-shadow:0 0 8px rgba(40,216,128,.6)}100%{text-shadow:none}}
+@keyframes flashRed{0%{color:var(--red);text-shadow:0 0 8px rgba(247,96,80,.6)}100%{text-shadow:none}}
+.fg{animation:flashGreen .5s ease-out forwards}
+.fr{animation:flashRed .5s ease-out forwards}
+
+/* Thanh progress animate */
+.mc-bar-f{transition:width 1.2s cubic-bezier(.34,1.56,.64,1)!important}
+
+/* Scroll reveal */
+.sec{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
+.sec.anim{opacity:0;transform:translateY(14px)}
+.sec.anim.visible{opacity:1;transform:translateY(0)}
+
+/* Chart card subtle glow */
+.cc:hover{border-color:rgba(255,255,255,.12);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+
+/* Button ripple */
+.btn-sm,.btn-save,.btn-cancel{position:relative;overflow:hidden}
+.btn-sm::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.08);opacity:0;transition:opacity .2s}
+.btn-sm:active::after{opacity:1}
+
+/* Số đếm lên khi vào màn hình */
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mc-val{animation:countUp .5s ease forwards}
+
+</style>
+</head>
+<body>
+
+
+<canvas id="particles-bg" aria-hidden="true"></canvas>
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="mbg" onclick="closeMBG(event)">
+<div class="modal" id="mdl">
+  <div class="modal-hd">
+    <div class="modal-title" id="mdl-title">Chỉnh số liệu</div>
+    <button class="modal-cls" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body" id="mdl-body"></div>
+  <div class="modal-ft">
+    <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
+    <button class="btn-save" onclick="saveModal()">💾 Lưu</button>
+  </div>
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sb">
+  <div class="sb-logo">
+    <div class="sb-icon">M</div>
+    <div><div class="sb-name">Phan Gia</div><div class="sb-ver">Marketing Dashboard</div></div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-grp">Overview</div>
+    <button class="sb-item on" onclick="scrollTo(0,0)"><div class="sb-dot" style="background:var(--blue)"></div>Tổng quan</button>
+    <div class="sb-grp">Organic</div>
+    <button class="sb-item" onclick="go('s-fp')"><div class="sb-dot" style="background:#1877f2"></div>Fanpage</button>
+    <button class="sb-item" onclick="go('s-seo')"><div class="sb-dot" style="background:var(--green)"></div>SEO</button>
+    <button class="sb-item" onclick="go('s-tko')"><div class="sb-dot" style="background:#ff0050"></div>TikTok Organic</button>
+    <button class="sb-item" onclick="go('s-yt')"><div class="sb-dot" style="background:#ff0000"></div>YouTube</button>
+    <div class="sb-grp">Paid Ads</div>
+    <button class="sb-item" onclick="go('s-fb')"><div class="sb-dot" style="background:#e34bbb"></div>Facebook Ads</button>
+    <button class="sb-item" onclick="go('s-gg')"><div class="sb-dot" style="background:#4285f4"></div>Google Ads</button>
+    <button class="sb-item" onclick="go('s-tka')"><div class="sb-dot" style="background:#ff0050"></div>TikTok Ads</button>
+    <div class="sb-grp">Website</div>
+    <button class="sb-item" onclick="go('s-web')"><div class="sb-dot" style="background:var(--purple)"></div>Website & Ads</button>
+  </div>
+  <div class="sb-foot" id="clk">—</div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+<div class="bar">
+  <div class="bar-l">
+    <div class="bar-title">Dashboard Marketing Phan Gia</div>
+    <div class="bar-sub" id="bar-sub">Cập nhật: —</div>
+  </div>
+  <div class="bar-r">
+    <select class="m-sel" id="msel" onchange="applyMonth()">
+      <option value="-1">📅 Chọn tháng để xem</option>
+      <option value="0">Tháng 1</option><option value="1">Tháng 2</option>
+      <option value="2">Tháng 3</option><option value="3">Tháng 4</option>
+      <option value="4">Tháng 5</option><option value="5">Tháng 6</option>
+      <option value="6">Tháng 7</option><option value="7">Tháng 8</option>
+      <option value="8">Tháng 9</option><option value="9">Tháng 10</option>
+      <option value="10">Tháng 11</option><option value="11">Tháng 12</option>
+    </select>
+    <button class="btn-sm btn-edit" onclick="openModal('overview')">✏️ Chỉnh số</button>
+    <button class="btn-sm" onclick="exportJSON()" title="Xuất dữ liệu">📤 Xuất</button>
+    <button class="btn-sm" onclick="document.getElementById('imp').click()" title="Nhập dữ liệu">📥 Nhập</button>
+    <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(event)">
+    <button class="btn-sm" id="btn-connect" onclick="openConnectPanel()" style="background:rgba(40,216,128,.1);border-color:rgba(40,216,128,.3);color:var(--green)">🔗 Kết nối Sheets</button>
+    <div class="pill-live"><div class="dot-live"></div>Live</div>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- OVERVIEW -->
+<div class="sec">
+  <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mt2);margin-bottom:10px" id="ov-label">Tổng quan 8 kênh · Nhấp vào ô bất kỳ để chỉnh số</div>
+  <div class="ov-grid">
+    <div class="ov-card ov-fp" onclick="openModal('fp')"><div class="ov-nm">Fanpage</div><div class="ov-val" style="color:#5090f8" id="ov-fp">—</div><div class="ov-lbl">Followers</div><div class="ov-chg neu" id="ov-fp-c">—</div></div>
+    <div class="ov-card ov-fb" onclick="openModal('fb')"><div class="ov-nm">FB Ads</div><div class="ov-val tk" style="color:#a07ff8" id="ov-fb">—</div><div class="ov-lbl">Chi phí tháng</div><div class="ov-chg neu" id="ov-fb-c">—</div></div>
+    <div class="ov-card ov-gg" onclick="openModal('gg')"><div class="ov-nm">Google Ads</div><div class="ov-val tk" style="color:#28ccd8" id="ov-gg">—</div><div class="ov-lbl">Chi phí tháng</div><div class="ov-chg neu" id="ov-gg-c">—</div></div>
+    <div class="ov-card ov-seo" onclick="openModal('seo')"><div class="ov-nm">SEO</div><div class="ov-val" style="color:#28d880" id="ov-seo">—</div><div class="ov-lbl">Organic Clicks</div><div class="ov-chg neu" id="ov-seo-c">—</div></div>
+    <div class="ov-card ov-tka" onclick="openModal('tka')"><div class="ov-nm">TikTok Ads</div><div class="ov-val tk" style="color:#f76050" id="ov-tka">—</div><div class="ov-lbl">Chi phí tháng</div><div class="ov-chg neu" id="ov-tka-c">—</div></div>
+    <div class="ov-card ov-tko" onclick="openModal('tko')"><div class="ov-nm">TikTok</div><div class="ov-val" style="color:#f87fb8" id="ov-tko">—</div><div class="ov-lbl">Views</div><div class="ov-chg neu" id="ov-tko-c">—</div></div>
+    <div class="ov-card ov-yt" onclick="openModal('yt')"><div class="ov-nm">YouTube</div><div class="ov-val" style="color:#f76050" id="ov-yt">—</div><div class="ov-lbl">Views tháng</div><div class="ov-chg neu" id="ov-yt-c">—</div></div>
+    <div class="ov-card ov-web" onclick="openModal('web')"><div class="ov-nm">Website</div><div class="ov-val tk" style="color:#a07ff8" id="ov-web">—</div><div class="ov-lbl">Sessions</div><div class="ov-chg neu" id="ov-web-c">—</div></div>
+  </div>
+</div>
+
+<!-- FANPAGE -->
+<div class="sec" id="s-fp">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(24,119,242,.15);color:#1877f2">📘</div>Fanpage Facebook</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-b">Organic</span><button class="btn-sm btn-edit" onclick="openModal('fp')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('fp')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Followers</div><div class="mc-val" style="color:var(--blue)" id="fp-fol">—</div><div class="mc-sub">Tổng người theo dõi</div><div class="mc-bdg up" id="fp-fol-b">—</div><div class="mc-bar"><div class="mc-bar-f" id="fp-fol-bar" style="background:var(--blue);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('fp')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Reach</div><div class="mc-val" style="color:var(--purple)" id="fp-reach">—</div><div class="mc-sub">Tiếp cận / tháng</div><div class="mc-bdg up" id="fp-reach-b">—</div></div>
+    <div class="mc" onclick="openModal('fp')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Engagement Rate</div><div class="mc-val" style="color:var(--green)" id="fp-eng">—</div><div class="mc-sub">Like + Cmt + Share / Reach</div><div class="mc-bdg up" id="fp-eng-b">—</div></div>
+    <div class="mc" onclick="openModal('fp')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Tổng Engagement</div><div class="mc-val" style="color:var(--yellow)" id="fp-tot">—</div><div class="mc-sub">Like + Cmt + Share</div><div class="mc-bdg up" id="fp-tot-b">—</div></div>
+  </div>
+  <div style="margin-top:10px" class="cr c64">
+    <div class="cc"><div class="cc-hd"><div><div class="cc-t">Reach & Followers theo tháng</div><div class="cc-s">12 tháng</div></div><span class="tag tag-b">Line</span></div><div style="height:150px"><canvas id="ch-fp"></canvas></div></div>
+    <div class="cc"><div class="cc-hd"><div class="cc-t">Loại tương tác</div><span class="tag tag-b">Donut</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;font-size:10px;color:var(--mt)">
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:7px;height:7px;border-radius:2px;background:var(--blue);display:inline-block"></span>Like <span id="dg-like">—</span></span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:7px;height:7px;border-radius:2px;background:var(--green);display:inline-block"></span>Share <span id="dg-share">—</span></span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:7px;height:7px;border-radius:2px;background:var(--yellow);display:inline-block"></span>Cmt <span id="dg-cmt">—</span></span>
+      </div>
+      <div style="height:110px"><canvas id="ch-fp-d"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- FB ADS -->
+<div class="sec" id="s-fb">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(227,75,187,.15);color:#e34bbb">📣</div>Facebook Ads</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-p">Paid</span><button class="btn-sm btn-edit" onclick="openModal('fb')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('fb')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Chi phí tháng</div><div class="mc-val tk" style="color:var(--purple)" id="fb-spend">—</div><div class="mc-sub">Budget: <span id="fb-budget">—</span></div><div class="mc-bdg" style="background:rgba(160,127,248,.12);color:var(--purple)" id="fb-bpct">—</div><div class="mc-bar"><div class="mc-bar-f" id="fb-bar" style="background:var(--purple);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('fb')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">ROAS</div><div class="mc-val" style="color:var(--green)" id="fb-roas">—</div><div class="mc-sub">Return on Ad Spend</div><div class="mc-bdg up" id="fb-roas-b">—</div></div>
+    <div class="mc" onclick="openModal('fb')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">CPC</div><div class="mc-val tk" style="color:var(--yellow)" id="fb-cpc">—</div><div class="mc-sub">Cost per click</div><div class="mc-bdg up" id="fb-cpc-b">—</div></div>
+    <div class="mc" onclick="openModal('fb')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Leads</div><div class="mc-val" style="color:var(--green)" id="fb-leads">—</div><div class="mc-sub">Form leads</div><div class="mc-bdg up" id="fb-leads-b">—</div></div>
+  </div>
+  <div style="margin-top:8px" class="mg g4">
+    <div class="mc" onclick="openModal('fb')"><div class="mc-lbl">Impressions</div><div class="mc-val" style="color:var(--blue)" id="fb-imp">—</div><div class="mc-sub">Lượt hiển thị</div></div>
+    <div class="mc" onclick="openModal('fb')"><div class="mc-lbl">Clicks</div><div class="mc-val" style="color:var(--teal)" id="fb-clicks">—</div><div class="mc-sub">Link clicks</div></div>
+    <div class="mc" onclick="openModal('fb')"><div class="mc-lbl">CTR</div><div class="mc-val" style="color:var(--orange)" id="fb-ctr">—</div><div class="mc-sub">Click-through rate</div></div>
+    <div class="mc" onclick="openModal('fb')"><div class="mc-lbl">CPL</div><div class="mc-val" style="color:var(--pink)" id="fb-cpl">—</div><div class="mc-sub">Cost per lead</div></div>
+  </div>
+  <div style="margin-top:10px" class="cc"><div class="cc-hd"><div><div class="cc-t">Chi phí & ROAS theo tháng</div></div><span class="tag tag-p">Bar+Line</span></div><div style="height:150px"><canvas id="ch-fb"></canvas></div></div>
+</div>
+
+<hr class="dv">
+
+<!-- GOOGLE ADS -->
+<div class="sec" id="s-gg">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(66,133,244,.15);color:#4285f4">🔍</div>Google Ads</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-t">Paid</span><button class="btn-sm btn-edit" onclick="openModal('gg')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('gg')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Chi phí tháng</div><div class="mc-val tk" style="color:var(--teal)" id="gg-spend">—</div><div class="mc-sub">Budget: <span id="gg-budget">—</span></div><div class="mc-bdg" style="background:rgba(40,204,216,.12);color:var(--teal)" id="gg-bpct">—</div><div class="mc-bar"><div class="mc-bar-f" id="gg-bar" style="background:var(--teal);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('gg')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">ROAS</div><div class="mc-val" style="color:var(--green)" id="gg-roas">—</div><div class="mc-sub">Return on Ad Spend</div><div class="mc-bdg up" id="gg-roas-b">—</div></div>
+    <div class="mc" onclick="openModal('gg')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Quality Score</div><div class="mc-val" style="color:var(--yellow)" id="gg-qs">—</div><div class="mc-sub">Avg Quality Score</div><div class="mc-bdg up" id="gg-qs-b">—</div></div>
+    <div class="mc" onclick="openModal('gg')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Conversions</div><div class="mc-val" style="color:var(--green)" id="gg-conv">—</div><div class="mc-sub">Chuyển đổi</div><div class="mc-bdg up" id="gg-conv-b">—</div></div>
+  </div>
+  <div style="margin-top:8px" class="mg g4">
+    <div class="mc" onclick="openModal('gg')"><div class="mc-lbl">Impressions</div><div class="mc-val" style="color:var(--blue)" id="gg-imp">—</div><div class="mc-sub">Lượt hiển thị</div></div>
+    <div class="mc" onclick="openModal('gg')"><div class="mc-lbl">Clicks</div><div class="mc-val" style="color:var(--teal)" id="gg-clicks">—</div><div class="mc-sub">Clicks thực</div></div>
+    <div class="mc" onclick="openModal('gg')"><div class="mc-lbl">CVR</div><div class="mc-val" style="color:var(--orange)" id="gg-cvr">—</div><div class="mc-sub">Tỉ lệ chuyển đổi</div></div>
+    <div class="mc" onclick="openModal('gg')"><div class="mc-lbl">CPA</div><div class="mc-val" style="color:var(--red)" id="gg-cpa">—</div><div class="mc-sub">Cost per action</div></div>
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- SEO -->
+<div class="sec" id="s-seo">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(40,216,128,.12);color:var(--green)">🌿</div>SEO – Organic Search</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-g">Organic</span><button class="btn-sm btn-edit" onclick="openModal('seo')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('seo')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Organic Clicks</div><div class="mc-val" style="color:var(--green)" id="seo-cl">—</div><div class="mc-sub">Google Search Console</div><div class="mc-bdg up" id="seo-cl-b">—</div><div class="mc-bar"><div class="mc-bar-f" id="seo-bar" style="background:var(--green);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('seo')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Impressions</div><div class="mc-val" style="color:var(--blue)" id="seo-imp">—</div><div class="mc-sub">Lượt hiển thị</div><div class="mc-bdg up" id="seo-imp-b">—</div></div>
+    <div class="mc" onclick="openModal('seo')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">CTR TB</div><div class="mc-val" style="color:var(--yellow)" id="seo-ctr">—</div><div class="mc-sub">Avg CTR</div></div>
+    <div class="mc" onclick="openModal('seo')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Vị trí TB</div><div class="mc-val" style="color:var(--orange)" id="seo-pos">—</div><div class="mc-sub">Avg Position (thấp=tốt)</div></div>
+  </div>
+  <div style="margin-top:10px" class="cc"><div class="cc-hd"><div><div class="cc-t">Organic Clicks 12 tháng</div></div><span class="tag tag-g">Line</span></div><div style="height:145px"><canvas id="ch-seo"></canvas></div></div>
+</div>
+
+<hr class="dv">
+
+<!-- TIKTOK ADS -->
+<div class="sec" id="s-tka">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(255,0,80,.12);color:#ff0050">⚡</div>TikTok Ads</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-r">Paid</span><button class="btn-sm btn-edit" onclick="openModal('tka')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('tka')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Chi phí tháng</div><div class="mc-val tk" style="color:var(--red)" id="tka-spend">—</div><div class="mc-sub">Budget: <span id="tka-budget">—</span></div><div class="mc-bdg" style="background:rgba(247,96,80,.12);color:var(--red)" id="tka-bpct">—</div><div class="mc-bar"><div class="mc-bar-f" id="tka-bar" style="background:var(--red);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('tka')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">ROAS</div><div class="mc-val" style="color:var(--yellow)" id="tka-roas">—</div><div class="mc-sub">Return on Ads</div><div class="mc-bdg up" id="tka-roas-b">—</div></div>
+    <div class="mc" onclick="openModal('tka')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">CPM</div><div class="mc-val tk" style="color:var(--teal)" id="tka-cpm">—</div><div class="mc-sub">Cost per 1000 views</div></div>
+    <div class="mc" onclick="openModal('tka')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Video View Rate</div><div class="mc-val" style="color:var(--purple)" id="tka-vvr">—</div><div class="mc-sub">% xem > 6 giây</div></div>
+  </div>
+  <div style="margin-top:8px" class="mg g4">
+    <div class="mc" onclick="openModal('tka')"><div class="mc-lbl">Impressions</div><div class="mc-val" style="color:var(--red)" id="tka-imp">—</div><div class="mc-sub">Lượt hiển thị</div></div>
+    <div class="mc" onclick="openModal('tka')"><div class="mc-lbl">Clicks</div><div class="mc-val" style="color:var(--teal)" id="tka-clicks">—</div><div class="mc-sub">Link clicks</div></div>
+    <div class="mc" onclick="openModal('tka')"><div class="mc-lbl">Conversions</div><div class="mc-val" style="color:var(--green)" id="tka-conv">—</div><div class="mc-sub">Chuyển đổi</div></div>
+    <div class="mc" onclick="openModal('tka')"><div class="mc-lbl">CPA</div><div class="mc-val" style="color:var(--orange)" id="tka-cpa">—</div><div class="mc-sub">Cost per action</div></div>
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- TIKTOK ORGANIC -->
+<div class="sec" id="s-tko">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(255,0,80,.1);color:#ff0050">🎵</div>TikTok Organic</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-pk">Organic</span><button class="btn-sm btn-edit" onclick="openModal('tko')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('tko')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Followers</div><div class="mc-val" style="color:var(--pink)" id="tko-fol">—</div><div class="mc-sub">Tổng followers</div><div class="mc-bdg up" id="tko-fol-b">—</div><div class="mc-bar"><div class="mc-bar-f" id="tko-bar" style="background:var(--pink);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('tko')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Video Views</div><div class="mc-val" style="color:var(--red)" id="tko-views">—</div><div class="mc-sub">Lượt xem tháng</div><div class="mc-bdg up" id="tko-views-b">—</div></div>
+    <div class="mc" onclick="openModal('tko')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Avg Watch Time</div><div class="mc-val" style="color:var(--yellow)" id="tko-watch">—</div><div class="mc-sub">Thời gian xem TB (giây)</div></div>
+    <div class="mc" onclick="openModal('tko')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Engagement Rate</div><div class="mc-val" style="color:var(--green)" id="tko-eng">—</div><div class="mc-sub">Like + Cmt + Share</div><div class="mc-bdg up" id="tko-eng-b">—</div></div>
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- YOUTUBE -->
+<div class="sec" id="s-yt">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(255,0,0,.12);color:#ff0000">▶</div>YouTube</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-r">Organic</span><button class="btn-sm btn-edit" onclick="openModal('yt')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('yt')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Subscribers</div><div class="mc-val" style="color:var(--red)" id="yt-sub">—</div><div class="mc-sub">Tổng subscribers</div><div class="mc-bdg up" id="yt-sub-b">—</div><div class="mc-bar"><div class="mc-bar-f" id="yt-bar" style="background:var(--red);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('yt')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Views tháng</div><div class="mc-val" style="color:var(--orange)" id="yt-views">—</div><div class="mc-sub">Lượt xem</div><div class="mc-bdg up" id="yt-views-b">—</div></div>
+    <div class="mc" onclick="openModal('yt')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Watch Time</div><div class="mc-val" style="color:var(--yellow)" id="yt-wt">—</div><div class="mc-sub">Giờ xem tháng</div></div>
+    <div class="mc" onclick="openModal('yt')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Audience Retention</div><div class="mc-val" style="color:var(--green)" id="yt-ret">—</div><div class="mc-sub">% giữ chân khán giả</div></div>
+  </div>
+  <div style="margin-top:8px" class="mg g4">
+    <div class="mc" onclick="openModal('yt')"><div class="mc-lbl">CTR Thumbnail</div><div class="mc-val" style="color:var(--blue)" id="yt-ctr">—</div><div class="mc-sub">Click tỉ lệ thumbnail</div></div>
+    <div class="mc" onclick="openModal('yt')"><div class="mc-lbl">New Subscribers</div><div class="mc-val" style="color:var(--purple)" id="yt-new">—</div><div class="mc-sub">Sub mới tháng này</div></div>
+    <div class="mc" onclick="openModal('yt')"><div class="mc-lbl">Likes</div><div class="mc-val" style="color:var(--green)" id="yt-like">—</div><div class="mc-sub">Tổng lượt thích</div></div>
+    <div class="mc" onclick="openModal('yt')"><div class="mc-lbl">Comments</div><div class="mc-val" style="color:var(--yellow)" id="yt-cmt">—</div><div class="mc-sub">Tổng bình luận</div></div>
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- WEBSITE -->
+<div class="sec" id="s-web">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-ico" style="background:rgba(160,127,248,.12);color:var(--purple)">🌐</div>Website & Ads</div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-p">Full Funnel</span><button class="btn-sm btn-edit" onclick="openModal('web')" style="font-size:10px;padding:3px 10px">✏️ Chỉnh</button></div>
+  </div>
+  <div class="mg g4">
+    <div class="mc" onclick="openModal('web')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Sessions</div><div class="mc-val tk" style="color:var(--purple)" id="web-sess">—</div><div class="mc-sub">Tổng phiên truy cập</div><div class="mc-bdg up" id="web-sess-b">—</div><div class="mc-bar"><div class="mc-bar-f" id="web-bar" style="background:var(--purple);width:0%"></div></div></div>
+    <div class="mc" onclick="openModal('web')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Users</div><div class="mc-val tk" style="color:var(--blue)" id="web-users">—</div><div class="mc-sub">Người dùng thực</div><div class="mc-bdg up" id="web-users-b">—</div></div>
+    <div class="mc" onclick="openModal('web')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">Revenue</div><div class="mc-val tk" style="color:var(--yellow)" id="web-rev">—</div><div class="mc-sub">Doanh thu website</div><div class="mc-bdg up" id="web-rev-b">—</div></div>
+    <div class="mc" onclick="openModal('web')"><div class="mc-edit">✏️ Edit</div><div class="mc-lbl">CVR</div><div class="mc-val" style="color:var(--green)" id="web-cvr">—</div><div class="mc-sub">Tỉ lệ chuyển đổi</div></div>
+  </div>
+  <div style="margin-top:8px" class="mg g4">
+    <div class="mc" onclick="openModal('web')"><div class="mc-lbl">Goal Completions</div><div class="mc-val" style="color:var(--green)" id="web-goal">—</div><div class="mc-sub">Mục tiêu hoàn thành</div></div>
+    <div class="mc" onclick="openModal('web')"><div class="mc-lbl">Bounce Rate</div><div class="mc-val" style="color:var(--red)" id="web-bounce">—</div><div class="mc-sub">Tỉ lệ thoát</div></div>
+    <div class="mc" onclick="openModal('web')"><div class="mc-lbl">Ads Revenue</div><div class="mc-val" style="color:var(--orange)" id="web-arev">—</div><div class="mc-sub">AdSense / Display</div></div>
+    <div class="mc" onclick="openModal('web')"><div class="mc-lbl">Avg Session</div><div class="mc-val" style="color:var(--purple)" id="web-time">—</div><div class="mc-sub">Thời gian phiên (phút)</div></div>
+  </div>
+  <div style="margin-top:10px" class="cr c64">
+    <div class="cc"><div class="cc-hd"><div><div class="cc-t">Sessions & Revenue theo tháng</div></div><span class="tag tag-p">Line</span></div><div style="height:150px"><canvas id="ch-web"></canvas></div></div>
+    <div class="cc"><div class="cc-hd"><div class="cc-t">Funnel chuyển đổi</div></div>
+      <div style="margin-top:8px" id="funnel-wrap">
+        <div class="fn-row"><div class="fn-lbl">Sessions</div><div class="fn-bar"><div class="fn-fill" id="fn-sess" style="background:var(--purple);width:100%"></div></div><div class="fn-val" id="fn-sess-v">—</div></div>
+        <div class="fn-row"><div class="fn-lbl">Users</div><div class="fn-bar"><div class="fn-fill" id="fn-users" style="background:var(--blue);width:70%"></div></div><div class="fn-val" id="fn-users-v">—</div></div>
+        <div class="fn-row"><div class="fn-lbl">Goal</div><div class="fn-bar"><div class="fn-fill" id="fn-goal" style="background:var(--green);width:4%"></div></div><div class="fn-val" id="fn-goal-v">—</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="padding:14px 0 8px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between">
+  <div style="font-size:10px;color:var(--mt2)">MarketingOS · Dữ liệu lưu tự động · <span id="last-save">Chưa lưu</span></div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-sm" onclick="resetData()" style="color:var(--red);border-color:rgba(247,96,80,.3)">🗑 Reset demo</button>
+  </div>
+</div>
+</div><!-- /body -->
+</div><!-- /main -->
+
+<script>
+/* ══════════════════════════════════════
+   APPS SCRIPT CONNECTION
+══════════════════════════════════════ */
+const APPS_SCRIPT_URL = ''; // ← Dán URL Apps Script của bạn vào đây
+
+/* ══════════════════════════════════════
+   DATA SCHEMA — mỗi kênh 1 object
+   Mỗi field là mảng 12 phần tử (12 tháng)
+══════════════════════════════════════ */
+const MO=['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+const MO_F=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+let CUR_MONTH=-1; // -1 = all
+let allCharts=[];
+
+/* Default demo data */
+function mkDemo(){
+  const r=(a,b)=>Array.from({length:12},()=>Math.round(a+Math.random()*(b-a)));
+  const g=(b,d)=>{let v=b;return Array.from({length:12},()=>{v+=Math.round(d*(.6+Math.random()*.8));return v;});};
+  return{
+    fp:{followers:g(178000,2100),new_fol:r(1500,3500),reach:r(35000,70000),likes:r(8000,20000),comments:r(1000,4500),shares:r(2000,9000)},
+    fb:{spend:r(11000000,19000000),budget:Array(12).fill(20000000),imp:r(200000,360000),clicks:r(6500,13000),leads:r(150,340),revenue:r(38000000,85000000),ctr:r(26,44).map(v=>v/10),cpc:r(1000,1700),cpl:r(40000,85000)},
+    gg:{spend:r(16000000,29000000),budget:Array(12).fill(30000000),imp:r(300000,540000),clicks:r(6000,11000),conv:r(230,440),revenue:r(52000000,120000000),qs:r(70,90).map(v=>v/10),cvr:r(30,58).map(v=>v/10),cpa:r(48000,88000)},
+    seo:{clicks:r(5500,13000),imp:r(120000,240000),pos:r(45,88).map(v=>v/10),ctr:r(35,65).map(v=>v/10)},
+    tka:{spend:r(7000000,14000000),budget:Array(12).fill(12000000),imp:r(600000,1200000),clicks:r(10000,21000),conv:r(70,155),revenue:r(15000000,42000000),vvr:r(20,40).map(v=>v/1),cpm:r(38000,62000),cpa:r(65000,130000)},
+    tko:{followers:g(40000,1700),new_fol:r(1000,2600),views:r(1100000,3200000),likes:r(55000,160000),comments:r(7500,24000),shares:r(15000,52000),watch:r(110,190).map(v=>v/10),eng:r(58,130).map(v=>v/10)},
+    yt:{sub:g(10000,420),new_sub:r(250,640),views:r(33000,78000),wt:r(2200,5200),ctr:r(40,74).map(v=>v/10),ret:r(40,60),likes:r(150,460),cmts:r(22,80)},
+    web:{sess:r(28000,52000),users:r(21000,38000),rev:r(180000000,420000000),cvr:r(16,34).map(v=>v/10),goal:r(600,1200),bounce:r(36,54).map(v=>v/1),arev:r(5000000,13000000),time:r(20,40).map(v=>v/10)},
+  };
+}
+
+let D=JSON.parse(localStorage.getItem('mktdash_v3')||'null')||mkDemo();
+
+/* ══ UTILS ══ */
+function sv(k){return D[k[0]]?.[k[1]]??null;}
+function ga(key,field){return D[key]?.[field]||[];}
+function fN(v,dec=0){if(v==null||isNaN(v))return'—';v=+v;if(v>=1e6)return(v/1e6).toFixed(dec||2)+'M';if(v>=1e3)return(v/1e3).toFixed(dec||1)+'K';return Math.round(v).toLocaleString('vi-VN');}
+function fV(v){if(v==null||isNaN(v))return'—';v=+v;if(v>=1e9)return(v/1e9).toFixed(1)+'B₫';if(v>=1e6)return(v/1e6).toFixed(1)+'M₫';if(v>=1e3)return Math.round(v/1000)+'K₫';return v.toLocaleString('vi-VN')+'₫';}
+function fP(v){if(v==null||isNaN(v))return'—';return(+v).toFixed(2)+'%';}
+function fX(v){if(v==null||isNaN(v))return'—';return(+v).toFixed(1)+'x';}
+function fD(v,d=2){if(v==null||isNaN(v))return'—';return(+v).toFixed(d);}
+function getM(arr,m){return(arr&&arr[m]!=null&&!isNaN(arr[m]))?+arr[m]:null;}
+function getMV(key,field){const arr=ga(key,field);if(CUR_MONTH<0)return arr.filter(v=>v!=null).at(-1);return getM(arr,CUR_MONTH);}
+function sumA(arr){return arr.filter(v=>v!=null&&!isNaN(v)).reduce((a,b)=>a+(+b),0);}
+function avgA(arr){const f=arr.filter(v=>v!=null&&!isNaN(v));return f.length?f.reduce((a,b)=>a+(+b),0)/f.length:null;}
+function lastV(arr){for(let i=arr.length-1;i>=0;i--){if(arr[i]!=null&&!isNaN(arr[i]))return+arr[i];}return null;}
+function delta(arr){const f=arr.filter(v=>v!=null&&!isNaN(v));if(f.length<2)return{cls:'neu',txt:'—'};const p=((f[f.length-1]-f[f.length-2])/Math.abs(f[f.length-2])*100).toFixed(1);return{cls:+p>0?'up':'dn',txt:(+p>0?'↑ +':'↓ ')+p+'%'};}
+
+function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function pct(s,b){return b>0?Math.min(100,Math.round(s/b*100)):0;}
+
+/* ══ CLOCK ══ */
+function tick(){
+  const d=new Date();
+  const t=d.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})+' · '+d.toLocaleTimeString('vi-VN');
+  set('clk',t);set('bar-sub','Cập nhật: '+t);
+}
+tick();setInterval(tick,1000);
+
+/* ══ SAVE ══ */
+function saveData(){
+  localStorage.setItem('mktdash_v3',JSON.stringify(D));
+  const t=new Date().toLocaleTimeString('vi-VN');
+  set('last-save','Lưu lúc '+t);
+  showToast('✅ Đã lưu số liệu!');
+}
+function exportJSON(){
+  const a=document.createElement('a');
+  a.href='data:application/json,'+encodeURIComponent(JSON.stringify(D,null,2));
+  a.download='marketing-data-2025.json';a.click();
+}
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{D=JSON.parse(ev.target.result);saveData();applyAll();destroyCharts();buildCharts();}catch(err){showToast('❌ File không hợp lệ!',true);}};
+  r.readAsText(f);e.target.value='';
+}
+function resetData(){if(!confirm('Reset về số liệu demo?'))return;D=mkDemo();saveData();applyAll();destroyCharts();buildCharts();}
+
+/* ══ TOAST ══ */
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.borderColor=err?'rgba(247,96,80,.3)':'rgba(40,216,128,.3)';
+  t.style.color=err?'var(--red)':'var(--green)';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ══ MONTH FILTER ══ */
+function applyMonth(){
+  CUR_MONTH=parseInt(document.getElementById('msel').value);
+  applyAll();
+}
+function go(id){const e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth',block:'start'});}
+
+/* ══ APPLY ALL DATA → DOM ══ */
+function applyAll(){
+  applyFP();applyFB();applyGG();applySEO();applyTKA();applyTKO();applyYT();applyWeb();applyOV();
+}
+
+function applyFP(){
+  const fol=getMV('fp','followers'),reach=getMV('fp','reach');
+  const likes=getMV('fp','likes'),cmts=getMV('fp','comments'),shares=getMV('fp','shares');
+  const tot=((likes||0)+(cmts||0)+(shares||0));
+  const eng=reach&&tot>0?(tot/reach*100).toFixed(2):null;
+  const df=delta(ga('fp','followers')),dr=delta(ga('fp','reach'));
+  set('fp-fol',fN(fol));set('fp-reach',fN(reach));
+  set('fp-eng',eng?eng+'%':'—');set('fp-tot',fN(tot));
+  set('fp-fol-b',df.txt);document.getElementById('fp-fol-b').className='mc-bdg '+df.cls;
+  set('fp-reach-b',dr.txt);document.getElementById('fp-reach-b').className='mc-bdg '+dr.cls;
+  const de=delta(ga('fp','likes').map((_,i)=>{const l=ga('fp','likes')[i]||0,c=ga('fp','comments')[i]||0,s=ga('fp','shares')[i]||0,r=ga('fp','reach')[i]||1;return(l+c+s)/r*100;}));
+  set('fp-eng-b',de.txt);document.getElementById('fp-eng-b').className='mc-bdg '+de.cls;
+  set('fp-tot-b','+'+fN(getMV('fp','new_fol'))+' mới');
+  const barP=pct(fol,300000);
+  const bar=document.getElementById('fp-fol-bar');if(bar)bar.style.width=barP+'%';
+  // donut
+  set('dg-like',fN(likes));set('dg-share',fN(shares));set('dg-cmt',fN(cmts));
+}
+
+function applyFB(){
+  const spend=getMV('fb','spend'),budget=getMV('fb','budget');
+  const roas=getMV('fb','revenue')&&spend?(getMV('fb','revenue')/spend).toFixed(1):null;
+  const cpc=getMV('fb','cpc'),ctr=getMV('fb','ctr'),leads=getMV('fb','leads'),cpl=getMV('fb','cpl');
+  const imp=getMV('fb','imp'),clicks=getMV('fb','clicks');
+  const p=pct(spend,budget);
+  set('fb-spend',fV(spend));set('fb-budget',fV(budget));set('fb-bpct',p+'% budget');
+  set('fb-roas',fX(roas));set('fb-cpc',fV(cpc));set('fb-leads',fN(leads));
+  set('fb-imp',fN(imp));set('fb-clicks',fN(clicks));set('fb-ctr',fP(ctr));set('fb-cpl',fV(cpl));
+  const dr=delta(ga('fb','revenue').map((r,i)=>ga('fb','spend')[i]>0?r/ga('fb','spend')[i]:null));
+  set('fb-roas-b',dr.txt);document.getElementById('fb-roas-b').className='mc-bdg '+dr.cls;
+  const dcpc=delta(ga('fb','cpc'));set('fb-cpc-b',dcpc.txt);document.getElementById('fb-cpc-b').className='mc-bdg '+(dcpc.cls==='up'?'dn':'up');
+  const dl=delta(ga('fb','leads'));set('fb-leads-b',dl.txt);document.getElementById('fb-leads-b').className='mc-bdg '+dl.cls;
+  const bar=document.getElementById('fb-bar');if(bar)bar.style.width=p+'%';
+}
+
+function applyGG(){
+  const spend=getMV('gg','spend'),budget=getMV('gg','budget');
+  const roas=getMV('gg','revenue')&&spend?(getMV('gg','revenue')/spend).toFixed(1):null;
+  const qs=getMV('gg','qs'),cvr=getMV('gg','cvr'),conv=getMV('gg','conv'),cpa=getMV('gg','cpa');
+  const imp=getMV('gg','imp'),clicks=getMV('gg','clicks');
+  const p=pct(spend,budget);
+  set('gg-spend',fV(spend));set('gg-budget',fV(budget));set('gg-bpct',p+'% budget');
+  set('gg-roas',fX(roas));set('gg-qs',fD(qs));set('gg-conv',fN(conv));
+  set('gg-imp',fN(imp));set('gg-clicks',fN(clicks));set('gg-cvr',fP(cvr));set('gg-cpa',fV(cpa));
+  const dr=delta(ga('gg','revenue').map((r,i)=>ga('gg','spend')[i]>0?r/ga('gg','spend')[i]:null));
+  set('gg-roas-b',dr.txt);document.getElementById('gg-roas-b').className='mc-bdg '+dr.cls;
+  const dqs=delta(ga('gg','qs'));set('gg-qs-b',dqs.txt);document.getElementById('gg-qs-b').className='mc-bdg '+dqs.cls;
+  const dc=delta(ga('gg','conv'));set('gg-conv-b',dc.txt);document.getElementById('gg-conv-b').className='mc-bdg '+dc.cls;
+  const bar=document.getElementById('gg-bar');if(bar)bar.style.width=p+'%';
+}
+
+function applySEO(){
+  const cl=getMV('seo','clicks'),imp=getMV('seo','imp'),pos=getMV('seo','pos'),ctr=getMV('seo','ctr');
+  set('seo-cl',fN(cl));set('seo-imp',fN(imp));set('seo-ctr',fP(ctr));set('seo-pos',fD(pos));
+  const dc=delta(ga('seo','clicks'));set('seo-cl-b',dc.txt);document.getElementById('seo-cl-b').className='mc-bdg '+dc.cls;
+  const di=delta(ga('seo','imp'));set('seo-imp-b',di.txt);document.getElementById('seo-imp-b').className='mc-bdg '+di.cls;
+  const bar=document.getElementById('seo-bar');if(bar)bar.style.width=pct(cl,20000)+'%';
+}
+
+function applyTKA(){
+  const spend=getMV('tka','spend'),budget=getMV('tka','budget');
+  const roas=getMV('tka','revenue')&&spend?(getMV('tka','revenue')/spend).toFixed(1):null;
+  const cpm=getMV('tka','cpm'),vvr=getMV('tka','vvr'),imp=getMV('tka','imp'),clicks=getMV('tka','clicks'),conv=getMV('tka','conv'),cpa=getMV('tka','cpa');
+  const p=pct(spend,budget);
+  set('tka-spend',fV(spend));set('tka-budget',fV(budget));set('tka-bpct',p+'% budget');
+  set('tka-roas',fX(roas));set('tka-cpm',fV(cpm));set('tka-vvr',fP(vvr));
+  set('tka-imp',fN(imp));set('tka-clicks',fN(clicks));set('tka-conv',fN(conv));set('tka-cpa',fV(cpa));
+  const dr=delta(ga('tka','revenue').map((r,i)=>ga('tka','spend')[i]>0?r/ga('tka','spend')[i]:null));
+  set('tka-roas-b',dr.txt);document.getElementById('tka-roas-b').className='mc-bdg '+dr.cls;
+  const bar=document.getElementById('tka-bar');if(bar)bar.style.width=p+'%';
+}
+
+function applyTKO(){
+  const fol=getMV('tko','followers'),views=getMV('tko','views'),watch=getMV('tko','watch'),eng=getMV('tko','eng');
+  set('tko-fol',fN(fol));set('tko-views',fN(views));set('tko-watch',fD(watch)+'s');set('tko-eng',fP(eng));
+  const df=delta(ga('tko','followers'));set('tko-fol-b',df.txt);document.getElementById('tko-fol-b').className='mc-bdg '+df.cls;
+  const dv=delta(ga('tko','views'));set('tko-views-b',dv.txt);document.getElementById('tko-views-b').className='mc-bdg '+dv.cls;
+  const de=delta(ga('tko','eng'));set('tko-eng-b',de.txt);document.getElementById('tko-eng-b').className='mc-bdg '+de.cls;
+  const bar=document.getElementById('tko-bar');if(bar)bar.style.width=pct(fol,100000)+'%';
+}
+
+function applyYT(){
+  const sub=getMV('yt','sub'),views=getMV('yt','views'),wt=getMV('yt','wt'),ret=getMV('yt','ret');
+  const ctr=getMV('yt','ctr'),newS=getMV('yt','new_sub'),like=getMV('yt','likes'),cmt=getMV('yt','cmts');
+  set('yt-sub',fN(sub));set('yt-views',fN(views));set('yt-wt',fN(wt)+'h');set('yt-ret',fP(ret));
+  set('yt-ctr',fP(ctr));set('yt-new',fN(newS));set('yt-like',fN(like));set('yt-cmt',fN(cmt));
+  const ds=delta(ga('yt','sub'));set('yt-sub-b',ds.txt);document.getElementById('yt-sub-b').className='mc-bdg '+ds.cls;
+  const dv=delta(ga('yt','views'));set('yt-views-b',dv.txt);document.getElementById('yt-views-b').className='mc-bdg '+dv.cls;
+  const bar=document.getElementById('yt-bar');if(bar)bar.style.width=pct(sub,50000)+'%';
+}
+
+function applyWeb(){
+  const sess=getMV('web','sess'),users=getMV('web','users'),rev=getMV('web','rev'),cvr=getMV('web','cvr');
+  const goal=getMV('web','goal'),bounce=getMV('web','bounce'),arev=getMV('web','arev'),time=getMV('web','time');
+  set('web-sess',fN(sess));set('web-users',fN(users));set('web-rev',fV(rev));set('web-cvr',fP(cvr));
+  set('web-goal',fN(goal));set('web-bounce',fP(bounce));set('web-arev',fV(arev));set('web-time',fD(time)+'p');
+  const ds=delta(ga('web','sess'));set('web-sess-b',ds.txt);document.getElementById('web-sess-b').className='mc-bdg '+ds.cls;
+  const du=delta(ga('web','users'));set('web-users-b',du.txt);document.getElementById('web-users-b').className='mc-bdg '+du.cls;
+  const dr=delta(ga('web','rev'));set('web-rev-b',dr.txt);document.getElementById('web-rev-b').className='mc-bdg '+dr.cls;
+  const bar=document.getElementById('web-bar');if(bar)bar.style.width=pct(sess,60000)+'%';
+  // funnel
+  set('fn-sess-v',fN(sess));set('fn-users-v',fN(users));set('fn-goal-v',fN(goal));
+  const ub=document.getElementById('fn-users');if(ub)ub.style.width=pct(users,sess)+'%';
+  const gb=document.getElementById('fn-goal');if(gb)gb.style.width=Math.max(2,pct(goal*10,sess))+'%';
+}
+
+function applyOV(){
+  const m=CUR_MONTH<0?MO_F[new Date().getMonth()]:MO_F[CUR_MONTH];
+  set('ov-label','Tổng quan 8 kênh · '+m+' · Nhấp vào ô để chỉnh số');
+  // FP
+  const fol=getMV('fp','followers');
+  const df=delta(ga('fp','followers'));
+  set('ov-fp',fN(fol,0));set('ov-fp-c',df.txt);document.getElementById('ov-fp-c').className='ov-chg '+df.cls;
+  // FB
+  const fbs=getMV('fb','spend');
+  const dfb=delta(ga('fb','spend'));
+  set('ov-fb',fV(fbs));set('ov-fb-c',dfb.txt);document.getElementById('ov-fb-c').className='ov-chg '+(dfb.cls==='up'?'dn':'up');
+  // GG
+  const ggs=getMV('gg','spend');
+  const dgg=delta(ga('gg','spend'));
+  set('ov-gg',fV(ggs));set('ov-gg-c',dgg.txt);document.getElementById('ov-gg-c').className='ov-chg '+(dgg.cls==='up'?'dn':'up');
+  // SEO
+  const seoc=getMV('seo','clicks');
+  const dseo=delta(ga('seo','clicks'));
+  set('ov-seo',fN(seoc));set('ov-seo-c',dseo.txt);document.getElementById('ov-seo-c').className='ov-chg '+dseo.cls;
+  // TKA
+  const tkas=getMV('tka','spend');
+  const dtka=delta(ga('tka','spend'));
+  set('ov-tka',fV(tkas));set('ov-tka-c',dtka.txt);document.getElementById('ov-tka-c').className='ov-chg '+(dtka.cls==='up'?'dn':'up');
+  // TKO
+  const tkov=getMV('tko','views');
+  const dtko=delta(ga('tko','views'));
+  set('ov-tko',fN(tkov));set('ov-tko-c',dtko.txt);document.getElementById('ov-tko-c').className='ov-chg '+dtko.cls;
+  // YT
+  const ytv=getMV('yt','views');
+  const dyt=delta(ga('yt','views'));
+  set('ov-yt',fN(ytv));set('ov-yt-c',dyt.txt);document.getElementById('ov-yt-c').className='ov-chg '+dyt.cls;
+  // WEB
+  const webs=getMV('web','sess');
+  const dweb=delta(ga('web','sess'));
+  set('ov-web',fN(webs));set('ov-web-c',dweb.txt);document.getElementById('ov-web-c').className='ov-chg '+dweb.cls;
+}
+
+/* ══ MODAL SYSTEM ══ */
+let CUR_SEC='';
+const FIELDS={
+  overview:{title:'✏️ Tổng quan — Chỉnh tháng hiện tại',fields:[
+    {sec:'fp',label:'👥 Fanpage: Followers',key:'followers',hint:'VD: 184200'},
+    {sec:'fp',label:'👥 Fanpage: Reach',key:'reach',hint:'VD: 42800'},
+    {sec:'fb',label:'📣 FB Ads: Chi phí (₫)',key:'spend',hint:'VD: 14820000'},
+    {sec:'fb',label:'📣 FB Ads: Budget (₫)',key:'budget',hint:'VD: 20000000'},
+    {sec:'gg',label:'🔍 GG Ads: Chi phí (₫)',key:'spend',hint:'VD: 22340000'},
+    {sec:'gg',label:'🔍 GG Ads: Budget (₫)',key:'budget',hint:'VD: 30000000'},
+    {sec:'seo',label:'🌿 SEO: Organic Clicks',key:'clicks',hint:'VD: 8420'},
+    {sec:'tka',label:'⚡ TikTok Ads: Chi phí (₫)',key:'spend',hint:'VD: 9640000'},
+    {sec:'tko',label:'🎵 TikTok: Views',key:'views',hint:'VD: 2140000'},
+    {sec:'yt',label:'▶ YouTube: Views',key:'views',hint:'VD: 52800'},
+    {sec:'web',label:'🌐 Website: Sessions',key:'sess',hint:'VD: 38720'},
+    {sec:'web',label:'🌐 Website: Revenue (₫)',key:'rev',hint:'VD: 284000000'},
+  ]},
+  fp:{title:'📘 Fanpage Facebook — Tất cả 12 tháng',monthly:true,key:'fp',fields:[
+    {key:'followers',label:'Followers (tổng)',hint:'184200'},{key:'new_fol',label:'New Followers',hint:'2400'},
+    {key:'reach',label:'Reach',hint:'42800'},{key:'likes',label:'Likes',hint:'8000'},
+    {key:'comments',label:'Comments',hint:'1200'},{key:'shares',label:'Shares',hint:'2400'},
+  ]},
+  fb:{title:'📣 Facebook Ads — Tất cả 12 tháng',monthly:true,key:'fb',fields:[
+    {key:'spend',label:'Chi phí (₫)',hint:'14820000'},{key:'budget',label:'Budget (₫)',hint:'20000000'},
+    {key:'imp',label:'Impressions',hint:'284300'},{key:'clicks',label:'Clicks',hint:'9212'},
+    {key:'leads',label:'Leads',hint:'248'},{key:'revenue',label:'Revenue (₫)',hint:'56316000'},
+    {key:'ctr',label:'CTR (%)',hint:'3.24'},{key:'cpc',label:'CPC (₫)',hint:'1240'},
+    {key:'cpl',label:'CPL (₫)',hint:'59760'},
+  ]},
+  gg:{title:'🔍 Google Ads — Tất cả 12 tháng',monthly:true,key:'gg',fields:[
+    {key:'spend',label:'Chi phí (₫)',hint:'22340000'},{key:'budget',label:'Budget (₫)',hint:'30000000'},
+    {key:'imp',label:'Impressions',hint:'412000'},{key:'clicks',label:'Clicks',hint:'8340'},
+    {key:'conv',label:'Conversions',hint:'344'},{key:'revenue',label:'Revenue (₫)',hint:'80000000'},
+    {key:'qs',label:'Quality Score',hint:'7.8'},{key:'cvr',label:'CVR (%)',hint:'4.12'},
+    {key:'cpa',label:'CPA (₫)',hint:'64941'},
+  ]},
+  seo:{title:'🌿 SEO — Tất cả 12 tháng',monthly:true,key:'seo',fields:[
+    {key:'clicks',label:'Organic Clicks',hint:'8420'},{key:'imp',label:'Impressions',hint:'184000'},
+    {key:'pos',label:'Vị trí TB',hint:'6.2'},{key:'ctr',label:'CTR (%)',hint:'4.58'},
+  ]},
+  tka:{title:'⚡ TikTok Ads — Tất cả 12 tháng',monthly:true,key:'tka',fields:[
+    {key:'spend',label:'Chi phí (₫)',hint:'9640000'},{key:'budget',label:'Budget (₫)',hint:'12000000'},
+    {key:'imp',label:'Impressions',hint:'842000'},{key:'clicks',label:'Clicks',hint:'14820'},
+    {key:'conv',label:'Conversions',hint:'109'},{key:'revenue',label:'Revenue (₫)',hint:'23000000'},
+    {key:'vvr',label:'Video View Rate (%)',hint:'28.4'},{key:'cpm',label:'CPM (₫)',hint:'48200'},
+    {key:'cpa',label:'CPA (₫)',hint:'88420'},
+  ]},
+  tko:{title:'🎵 TikTok Organic — Tất cả 12 tháng',monthly:true,key:'tko',fields:[
+    {key:'followers',label:'Followers (tổng)',hint:'48240'},{key:'new_fol',label:'New Followers',hint:'1840'},
+    {key:'views',label:'Video Views',hint:'2140000'},{key:'likes',label:'Likes',hint:'84200'},
+    {key:'comments',label:'Comments',hint:'4820'},{key:'shares',label:'Shares',hint:'12400'},
+    {key:'watch',label:'Avg Watch Time (giây)',hint:'14.2'},{key:'eng',label:'Engagement Rate (%)',hint:'8.42'},
+  ]},
+  yt:{title:'▶ YouTube — Tất cả 12 tháng',monthly:true,key:'yt',fields:[
+    {key:'sub',label:'Subscribers (tổng)',hint:'12840'},{key:'new_sub',label:'New Subscribers',hint:'420'},
+    {key:'views',label:'Views',hint:'52800'},{key:'wt',label:'Watch Time (giờ)',hint:'3240'},
+    {key:'ctr',label:'CTR Thumbnail (%)',hint:'5.42'},{key:'ret',label:'Audience Retention (%)',hint:'48'},
+    {key:'likes',label:'Likes',hint:'284'},{key:'cmts',label:'Comments',hint:'48'},
+  ]},
+  web:{title:'🌐 Website — Tất cả 12 tháng',monthly:true,key:'web',fields:[
+    {key:'sess',label:'Sessions',hint:'38720'},{key:'users',label:'Users',hint:'28400'},
+    {key:'rev',label:'Revenue (₫)',hint:'284000000'},{key:'cvr',label:'CVR (%)',hint:'2.18'},
+    {key:'goal',label:'Goal Completions',hint:'842'},{key:'bounce',label:'Bounce Rate (%)',hint:'42.8'},
+    {key:'arev',label:'Ads Revenue (₫)',hint:'8420000'},{key:'time',label:'Avg Session (phút)',hint:'2.8'},
+  ]},
+};
+
+function openModal(sec){
+  CUR_SEC=sec;
+  const cfg=FIELDS[sec];
+  if(!cfg)return;
+  set('mdl-title',cfg.title);
+  const m=CUR_MONTH<0?new Date().getMonth():CUR_MONTH;
+  let html='';
+
+  if(cfg.monthly){
+    // Build table: rows=fields, cols=12 months
+    html='<div style="overflow-x:auto"><table style="border-collapse:collapse;min-width:700px;width:100%">';
+    html+='<tr><th style="font-size:9px;color:var(--mt2);padding:4px 6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--bdr)">Chỉ số</th>';
+    MO.forEach((mo,i)=>{
+      const isH=i===m;
+      html+=`<th style="font-size:9px;color:${isH?'var(--blue)':'var(--mt2)'};padding:4px 6px;text-align:center;border-bottom:1px solid var(--bdr);white-space:nowrap;background:${isH?'rgba(80,144,248,.08)':'transparent'}">${mo}</th>`;
+    });
+    html+='</tr>';
+    cfg.fields.forEach(f=>{
+      html+=`<tr><td style="font-size:10px;color:var(--mt);padding:5px 6px;white-space:nowrap;border-bottom:1px solid var(--bdr);font-weight:600">${f.label}</td>`;
+      MO.forEach((_,i)=>{
+        const val=(D[cfg.key]?.[f.key]||[])[i]??'';
+        const isH=i===m;
+        html+=`<td style="padding:3px 4px;border-bottom:1px solid var(--bdr);background:${isH?'rgba(80,144,248,.06)':'transparent'}"><input data-sec="${cfg.key}" data-fld="${f.key}" data-m="${i}" value="${val}" placeholder="${f.hint||''}" style="width:88px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:5px;padding:5px 6px;color:var(--txt);font-size:11px;font-family:'Space Mono',monospace;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bdr2)'"></td>`;
+      });
+      html+='</tr>';
+    });
+    html+='</table></div>';
+    html+='<div style="margin-top:10px;font-size:10px;color:var(--mt)">💡 Cột màu xanh = tháng đang chọn · Nhập số nguyên, không cần dấu ₫ hay %</div>';
+  } else {
+    // Overview: flat fields
+    html='<div class="field-row" style="grid-template-columns:1fr 1fr">';
+    cfg.fields.forEach((f,i)=>{
+      if(i>0&&i%2===0) html+='</div><div class="field-row" style="grid-template-columns:1fr 1fr">';
+      const val=(D[f.sec]?.[f.key]||[])[m]??'';
+      html+=`<div class="field"><label>${f.label}</label><input data-sec="${f.sec}" data-fld="${f.key}" data-m="${m}" value="${val}" placeholder="${f.hint||''}"></div>`;
+    });
+    html+='</div>';
+    html+=`<div style="margin-top:8px;font-size:10px;color:var(--mt)">💡 Đang nhập cho <strong style="color:var(--blue)">${MO_F[m]}</strong>. Để nhập cả 12 tháng, nhấp vào từng kênh trong sidebar.</div>`;
+  }
+  document.getElementById('mdl-body').innerHTML=html;
+  document.getElementById('mbg').classList.add('open');
+  const first=document.querySelector('#mdl-body input');if(first)setTimeout(()=>first.focus(),80);
+}
+
+function closeModal(){document.getElementById('mbg').classList.remove('open');}
+function closeMBG(e){if(e.target===document.getElementById('mbg'))closeModal();}
+
+function saveModal(){
+  document.querySelectorAll('#mdl-body input').forEach(inp=>{
+    const sec=inp.dataset.sec,fld=inp.dataset.fld,mi=parseInt(inp.dataset.m);
+    const raw=inp.value.trim().replace(/[₫%,\s]/g,'');
+    const n=parseFloat(raw);
+    if(!isNaN(n)){
+      if(!D[sec])D[sec]={};
+      if(!D[sec][fld])D[sec][fld]=Array(12).fill(null);
+      D[sec][fld][mi]=n;
+    }
+  });
+  saveData();applyAll();
+  // rebuild charts after data change
+  destroyCharts();buildCharts();
+  closeModal();
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+/* ══ CHARTS ══ */
+const GR='rgba(255,255,255,.04)',TC='#50506a';
+const TT={backgroundColor:'rgba(10,10,18,.97)',titleColor:'#eeeef8',bodyColor:'#7878a0',borderColor:'rgba(255,255,255,.08)',borderWidth:1};
+function destroyCharts(){allCharts.forEach(c=>{try{c.destroy();}catch(e){}});allCharts=[];}
+
+function mkLine(id,labels,datasets,extraOpts={}){
+  const c=document.getElementById(id);if(!c)return;
+  const ch=new Chart(c,{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{x:{ticks:{color:TC,font:{size:9}},grid:{color:GR},border:{display:false}},y:{ticks:{color:TC,font:{size:9}},grid:{color:GR},border:{display:false}},...(extraOpts.y1?{y1:{position:'right',ticks:{color:extraOpts.y1c||TC,font:{size:9},callback:extraOpts.y1fmt||(v=>v)},grid:{display:false},border:{display:false}}}:{})}}});
+  allCharts.push(ch);
+}
+function mkDough(id,labels,data,colors){
+  const c=document.getElementById(id);if(!c)return;
+  const ch=new Chart(c,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:TT}}});
+  allCharts.push(ch);
+}
+function mkBarLine(id,labels,barD,lineD,lColor,lFmt){
+  const c=document.getElementById(id);if(!c)return;
+  const ch=new Chart(c,{type:'bar',data:{labels,datasets:[
+    {...barD,yAxisID:'y'},
+    {...lineD,type:'line',yAxisID:'y1',borderColor:lColor,pointRadius:3,pointBackgroundColor:lColor,borderWidth:2,tension:.4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{ticks:{color:TC,font:{size:9}},grid:{display:false},border:{display:false}},
+  y:{ticks:{color:TC,font:{size:9},callback:v=>(v/1e6).toFixed(0)+'M'},grid:{color:GR},border:{display:false}},
+  y1:{position:'right',ticks:{color:lColor,font:{size:9},callback:lFmt},grid:{display:false},border:{display:false}}}}});
+  allCharts.push(ch);
+}
+
+function buildCharts(){
+  const lb=MO;
+  // FP reach line
+  mkLine('ch-fp',lb,[
+    {label:'Reach',data:ga('fp','reach'),borderColor:'var(--blue)',backgroundColor:'rgba(80,144,248,.07)',fill:true,tension:.45,pointRadius:3,pointBackgroundColor:'var(--blue)',borderWidth:2},
+    {label:'Followers',data:ga('fp','followers'),borderColor:'var(--green)',fill:false,tension:.45,pointRadius:2,borderWidth:2,borderDash:[4,3],yAxisID:'y1'}
+  ],{y1:true,y1c:'var(--green)',y1fmt:v=>fN(v)});
+  // FP donut
+  const likes=sumA(ga('fp','likes'))||1,shares=sumA(ga('fp','shares'))||1,cmts=sumA(ga('fp','comments'))||1;
+  mkDough('ch-fp-d',['Like','Share','Cmt'],[likes,shares,cmts],['var(--blue)','var(--green)','var(--yellow)']);
+  // FB bar+line
+  const fbS=ga('fb','spend');
+  const fbRoas=fbS.map((s,i)=>s>0&&ga('fb','revenue')[i]?+(ga('fb','revenue')[i]/s).toFixed(1):null);
+  mkBarLine('ch-fb',lb,
+    {label:'Chi phí',data:fbS,backgroundColor:'rgba(160,127,248,.38)',borderColor:'var(--purple)',borderWidth:1,borderRadius:4},
+    {label:'ROAS',data:fbRoas},'var(--green)',v=>v+'x');
+  // SEO line
+  mkLine('ch-seo',lb,[{label:'Clicks',data:ga('seo','clicks'),borderColor:'var(--green)',backgroundColor:'rgba(40,216,128,.07)',fill:true,tension:.42,pointRadius:3,pointBackgroundColor:'var(--green)',borderWidth:2}]);
+  // Website dual line
+  const wc=document.getElementById('ch-web');if(wc){
+    const ch=new Chart(wc,{type:'line',data:{labels:lb,datasets:[
+      {label:'Sessions',data:ga('web','sess'),borderColor:'var(--purple)',backgroundColor:'rgba(160,127,248,.07)',fill:true,tension:.45,pointRadius:3,pointBackgroundColor:'var(--purple)',borderWidth:2,yAxisID:'y'},
+      {label:'Revenue',data:ga('web','rev'),borderColor:'var(--yellow)',pointRadius:3,pointBackgroundColor:'var(--yellow)',borderWidth:2,tension:.4,borderDash:[4,3],yAxisID:'y1'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},
+    scales:{x:{ticks:{color:TC,font:{size:9}},grid:{display:false},border:{display:false}},
+    y:{ticks:{color:TC,font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v},grid:{color:GR},border:{display:false}},
+    y1:{position:'right',ticks:{color:'var(--yellow)',font:{size:9},callback:v=>(v/1e6).toFixed(0)+'M₫'},grid:{display:false},border:{display:false}}}}});
+    allCharts.push(ch);
+  }
+}
+
+/* ══ LIVE TICKER ══ */
+const TICKERS=[
+  {id:'ov-fb',base:()=>getMV('fb','spend')||14820000,delta:100000,fmt:fV},
+  {id:'ov-gg',base:()=>getMV('gg','spend')||22340000,delta:150000,fmt:fV},
+  {id:'ov-tka',base:()=>getMV('tka','spend')||9640000,delta:80000,fmt:fV},
+  {id:'ov-web',base:()=>getMV('web','sess')||38720,delta:20,fmt:fN},
+  {id:'fb-spend',base:()=>getMV('fb','spend')||14820000,delta:80000,fmt:fV},
+  {id:'fb-cpc',base:()=>getMV('fb','cpc')||1240,delta:15,fmt:fV},
+  {id:'gg-spend',base:()=>getMV('gg','spend')||22340000,delta:120000,fmt:fV},
+  {id:'tka-spend',base:()=>getMV('tka','spend')||9640000,delta:80000,fmt:fV},
+  {id:'tka-cpm',base:()=>getMV('tka','cpm')||48200,delta:300,fmt:fV},
+  {id:'web-sess',base:()=>getMV('web','sess')||38720,delta:18,fmt:fN},
+  {id:'web-users',base:()=>getMV('web','users')||28400,delta:12,fmt:fN},
+  {id:'web-rev',base:()=>getMV('web','rev')||284000000,delta:400000,fmt:fV},
+];
+const TS={};
+function initTickers(){TICKERS.forEach(t=>{TS[t.id]=t.base();});}
+function flashEl(el,up){el.classList.remove('fg','fr');el.classList.add(up?'fg':'fr');setTimeout(()=>el.classList.remove('fg','fr'),500);}
+function tickAll(){
+  TICKERS.forEach(t=>{
+    const d=Math.floor(Math.random()*t.delta*3)-t.delta;
+    TS[t.id]=Math.max(0,(TS[t.id]||t.base())+d);
+    const el=document.getElementById(t.id);
+    if(el&&el.classList.contains('tk')){el.textContent=t.fmt(TS[t.id]);flashEl(el,d>0);}
+  });
+}
+
+/* ══ INIT ══ */
+window.addEventListener('load',()=>{
+  applyAll();
+  buildCharts();
+  initTickers();
+  setTimeout(()=>{tickAll();setInterval(tickAll,2600);},800);
+  // Live chart nudge
+  setInterval(()=>{
+    allCharts.forEach(ch=>{
+      if(!ch?.data)return;
+      ch.data.datasets.forEach(ds=>{
+        if(!ds.data?.length)return;
+        const last=ds.data[ds.data.length-1];
+        if(last==null)return;
+        ds.data.push(Math.max(0,last+(Math.random()-.38)*last*.03));
+        ds.data.shift();
+      });
+      ch.update('none');
+    });
+  },4500);
+  // Set current month in selector
+  const sel=document.getElementById('msel');
+  if(sel)sel.value=new Date().getMonth();
+  CUR_MONTH=new Date().getMonth();
+  applyAll();
+
+/* ══ CONNECT PANEL ══ */
+function openConnectPanel(){
+  const saved=localStorage.getItem('mktdash_api_url');
+  if(saved){const inp=document.getElementById('api-url-input');if(inp)inp.value=saved;}
+  document.getElementById('connect-overlay').style.display='flex';
+  goPanel(saved?3:1);
+}
+function closeConnect(){document.getElementById('connect-overlay').style.display='none';}
+function goPanel(n){
+  [1,2,3].forEach(i=>{
+    const p=document.getElementById('cp-panel'+i);
+    if(p)p.style.display=i===n?'block':'none';
+    const s=document.getElementById('cp-s'+i);
+    if(s){s.style.background=i===n?'rgba(80,144,248,.15)':'rgba(255,255,255,.04)';
+    s.style.color=i===n?'var(--blue)':'var(--mt)';}
+  });
+}
+function copyCode(){
+  const code=document.getElementById('code-display').textContent;
+  navigator.clipboard.writeText(code).then(()=>showToast('✅ Đã copy code!'));
+}
+
+/* ══ SHEETS CONNECTION — Fixed for exact sheet names ══ */
+let API_URL = localStorage.getItem('mktdash_api_url') || '';
+
+// Field mapping: key in D{} → column header in Excel
+const FIELD_MAP = {
+  fp: {
+    sheet: 'FANPAGE',
+    map: {
+      followers: 'Followers (tổng)', new_fol: 'New Followers',
+      reach: 'Reach', likes: 'Likes',
+      comments: 'Comments', shares: 'Shares'
+    }
+  },
+  fb: {
+    sheet: 'FB_ADS',
+    map: {
+      spend: 'Chi phí (₫)', budget: 'Budget (₫)',
+      imp: 'Impressions', clicks: 'Clicks',
+      leads: 'Leads', revenue: 'Revenue (₫)',
+      ctr: 'CTR', cpc: 'CPC (₫)', cpl: 'CPL (₫)'
+    }
+  },
+  gg: {
+    sheet: 'GG_ADS',
+    map: {
+      spend: 'Chi phí (₫)', budget: 'Budget (₫)',
+      imp: 'Impressions', clicks: 'Clicks',
+      conv: 'Conversions', revenue: 'Revenue (₫)',
+      qs: 'Quality Score TB', cvr: 'CVR (%)', cpa: 'CPA (₫)'
+    }
+  },
+  seo: {
+    sheet: 'SEO',
+    map: {
+      clicks: 'Organic Clicks', imp: 'Impressions',
+      pos: 'Avg Position', ctr: 'CTR (%)'
+    }
+  },
+  tka: {
+    sheet: 'TIKTOK_ADS',
+    map: {
+      spend: 'Chi phí (₫)', budget: 'Budget (₫)',
+      imp: 'Impressions', clicks: 'Clicks',
+      conv: 'Conversions', revenue: 'Revenue (₫)',
+      vvr: 'Video View Rate (%)', cpm: 'CPM (₫)', cpa: 'CPA (₫)'
+    }
+  },
+  tko: {
+    sheet: 'TIKTOK_ORG',
+    map: {
+      followers: 'Followers (tổng)', new_fol: 'New Followers',
+      views: 'Video Views', likes: 'Likes',
+      comments: 'Comments', shares: 'Shares',
+      watch: 'Avg Watch Time (s)', eng: 'Engagement Rate (%)'
+    }
+  },
+  yt: {
+    sheet: 'YOUTUBE',
+    map: {
+      sub: 'Subscribers (tổng)', new_sub: 'New Subscribers',
+      views: 'Views', wt: 'Watch Time (giờ)',
+      ctr: 'CTR Thumbnail (%)', ret: 'Audience Retention (%)',
+      likes: 'Likes', cmts: 'Comments'
+    }
+  },
+  web: {
+    sheet: 'WEBSITE',
+    map: {
+      sess: 'Sessions', users: 'Users',
+      rev: 'Revenue (₫)', cvr: 'CVR (%)',
+      goal: 'Goal Completions', bounce: 'Bounce Rate (%)',
+      arev: 'Ads Revenue (₫)', time: 'Avg Session (phút)'
+    }
+  }
+};
+
+function monthsToArrays(months, fieldMap) {
+  if (!months || !months.length) return null;
+  const result = {};
+  Object.keys(fieldMap).forEach(key => {
+    const colName = fieldMap[key];
+    result[key] = months.map(row => {
+      // Try exact match first, then case-insensitive
+      let val = row[colName];
+      if (val === undefined) {
+        const k = Object.keys(row).find(k => k.toLowerCase().replace(/[^a-z0-9]/g,'') === colName.toLowerCase().replace(/[^a-z0-9]/g,''));
+        val = k ? row[k] : null;
+      }
+      return (val !== null && val !== undefined && val !== '' && !isNaN(val)) ? +val : null;
+    });
+  });
+  return result;
+}
+
+/* ══ CONNECT PANEL FUNCTIONS ══ */
+function openConnectPanel(){
+  const saved = localStorage.getItem('mktdash_api_url');
+  if (saved) {
+    const inp = document.getElementById('api-url-input');
+    if (inp) inp.value = saved;
+  }
+  document.getElementById('connect-overlay').style.display = 'flex';
+  goPanel(saved ? 3 : 1);
+}
+function closeConnect(){
+  document.getElementById('connect-overlay').style.display = 'none';
+}
+function goPanel(n){
+  [1,2,3].forEach(i => {
+    const p = document.getElementById('cp-panel' + i);
+    if (p) p.style.display = i === n ? 'block' : 'none';
+    const s = document.getElementById('cp-s' + i);
+    if (s) {
+      s.style.background = i === n ? 'rgba(80,144,248,.15)' : 'rgba(255,255,255,.04)';
+      s.style.color = i === n ? '#5090f8' : '#7878a0';
+      s.style.borderColor = i === n ? 'rgba(80,144,248,.3)' : 'rgba(255,255,255,.08)';
+    }
+  });
+}
+function copyCode(){
+  const code = document.getElementById('code-display').textContent;
+  navigator.clipboard.writeText(code)
+    .then(() => showToast('✅ Đã copy code! Dán vào Apps Script.'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = code; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('✅ Đã copy code!');
+    });
+}
+
+async function loadFromSheets() {
+  if (!API_URL) { showToast('⚠️ Chưa có URL Apps Script. Nhấn 🔗 Kết nối Sheets.', true); return; }
+  const btn = document.getElementById('btn-connect');
+  if (btn) { btn.textContent = '⏳ Đang tải...'; btn.disabled = true; }
+  try {
+    // Fetch ALL sheets in one request
+    const res = await fetch(API_URL + '?sheet=ALL');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'API lỗi');
+
+    let loaded = 0, failed = [];
+    Object.entries(FIELD_MAP).forEach(([key, cfg]) => {
+      const sheetResult = json.data[cfg.sheet];
+      if (sheetResult && sheetResult.months && sheetResult.months.length) {
+        const parsed = monthsToArrays(sheetResult.months, cfg.map);
+        if (parsed) { D[key] = parsed; loaded++; }
+        else failed.push(cfg.sheet);
+      } else {
+        failed.push(cfg.sheet + (sheetResult?.error ? '('+sheetResult.error+')' : ''));
+      }
+    });
+
+    applyAll(); destroyCharts(); buildCharts();
+    set('last-save', 'Từ Sheets · ' + new Date().toLocaleTimeString('vi-VN'));
+    showToast(loaded > 0
+      ? '✅ Đã tải ' + loaded + '/8 kênh!' + (failed.length ? ' Thiếu: ' + failed.join(', ') : '')
+      : '❌ Không tải được dữ liệu', loaded === 0);
+
+  } catch(e) {
+    showToast('❌ Lỗi: ' + e.message, true);
+  } finally {
+    if (btn) { btn.textContent = '🔄 Refresh'; btn.disabled = false; btn.onclick = loadFromSheets; }
+  }
+}
+
+async function testAndSave() {
+  const url = document.getElementById('api-url-input').value.trim();
+  const errEl = document.getElementById('cp-err');
+  const okEl = document.getElementById('cp-ok');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+
+  if (!url) { errEl.textContent = '⚠️ Vui lòng nhập URL.'; errEl.style.display = 'block'; return; }
+  if (!url.includes('script.google.com')) {
+    errEl.textContent = '❌ URL phải có dạng: script.google.com/macros/s/.../exec';
+    errEl.style.display = 'block'; return;
+  }
+
+  okEl.textContent = '⏳ Đang kiểm tra...'; okEl.style.display = 'block';
+  try {
+    // Test with LIST first
+    const res = await fetch(url + '?sheet=LIST');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+
+    if (json.ok && json.sheets) {
+      API_URL = url;
+      localStorage.setItem('mktdash_api_url', url);
+      okEl.textContent = '✅ Kết nối OK! Tìm thấy ' + json.sheets.length + ' sheets: ' + json.sheets.join(', ');
+      setTimeout(async () => { closeConnect(); await loadFromSheets(); }, 1200);
+    } else {
+      throw new Error(json.error || 'Phản hồi không hợp lệ');
+    }
+  } catch(e) {
+    errEl.textContent = '❌ ' + e.message + '. Kiểm tra URL và quyền truy cập.';
+    errEl.style.display = 'block'; okEl.style.display = 'none';
+  }
+}
+
+// Auto-load on startup if URL saved
+window.addEventListener('load', () => {
+  if (API_URL) {
+    const btn = document.getElementById('btn-connect');
+    if (btn) btn.textContent = '🔄 Refresh';
+    setTimeout(loadFromSheets, 500);
+  }
+});
+
+
+});
+</script>
+
+<!-- CONNECT PANEL -->
+<div id="connect-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:16px">
+<div style="background:#1c1c2a;border:1px solid rgba(255,255,255,.16);border-radius:14px;width:560px;max-width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column">
+  <div style="padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="font-size:16px;font-weight:700;color:#eeeef8">🔗 Kết nối Google Sheets</div>
+    <button onclick="closeConnect()" style="background:none;border:none;color:#7878a0;cursor:pointer;font-size:22px;line-height:1;padding:2px 6px">✕</button>
+  </div>
+  <div style="display:flex;padding:14px 22px 0;flex-shrink:0;gap:0">
+    <div id="cp-s1" onclick="goPanel(1)" style="flex:1;text-align:center;padding:7px;border-radius:7px 0 0 7px;font-size:11px;font-weight:600;background:rgba(80,144,248,.15);color:#5090f8;border:1px solid rgba(80,144,248,.3);cursor:pointer">1 · Dán code</div>
+    <div id="cp-s2" onclick="goPanel(2)" style="flex:1;text-align:center;padding:7px;font-size:11px;font-weight:600;background:rgba(255,255,255,.04);color:#7878a0;border:1px solid rgba(255,255,255,.08);border-left:none;cursor:pointer">2 · Deploy</div>
+    <div id="cp-s3" onclick="goPanel(3)" style="flex:1;text-align:center;padding:7px;border-radius:0 7px 7px 0;font-size:11px;font-weight:600;background:rgba(255,255,255,.04);color:#7878a0;border:1px solid rgba(255,255,255,.08);border-left:none;cursor:pointer">3 · Nhập URL</div>
+  </div>
+  <div style="padding:16px 22px;overflow-y:auto;flex:1">
+    <div id="cp-panel1">
+      <div style="font-size:12px;color:#7878a0;line-height:1.8;margin-bottom:12px">
+        <div style="display:flex;gap:8px;margin-bottom:7px"><span style="background:rgba(80,144,248,.15);color:#5090f8;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span><span>Vào Sheets → <strong style="color:#eeeef8">Tiện ích → Apps Script</strong></span></div>
+        <div style="display:flex;gap:8px;margin-bottom:7px"><span style="background:rgba(80,144,248,.15);color:#5090f8;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span><span>Xoá hết code cũ → dán code bên dưới → <strong style="color:#eeeef8">Ctrl+S</strong></span></div>
+      </div>
+      <div style="position:relative;background:#090912;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+        <button onclick="copyCode()" style="position:absolute;top:8px;right:8px;background:rgba(80,144,248,.15);border:1px solid rgba(80,144,248,.3);color:#5090f8;padding:3px 9px;border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit;font-weight:600">📋 Copy</button>
+        <pre id="code-display" style="font-size:10px;color:#a0a0c8;line-height:1.6;white-space:pre-wrap;margin:0;padding-right:60px;font-family:monospace">function doGet(e){try{var p=(e&&e.parameter&&e.parameter.sheet)?e.parameter.sheet.trim():"LIST";var ss=SpreadsheetApp.getActiveSpreadsheet();if(p==="LIST"){var names=ss.getSheets().map(function(s){return s.getName();});return out({ok:true,sheets:names});}if(p==="ALL"){var sheets=["FANPAGE","FB_ADS","GG_ADS","SEO","TIKTOK_ADS","TIKTOK_ORG","YOUTUBE","WEBSITE"];var res={};sheets.forEach(function(n){try{res[n]=readSheet(ss,n);}catch(ex){res[n]={error:ex.toString()};}});return out({ok:true,data:res,updated:new Date().toLocaleString("vi-VN")});}return out({ok:true,sheet:p,data:readSheet(ss,p)});}catch(err){return out({ok:false,error:err.toString()});}}
+function readSheet(ss,name){var ws=ss.getSheetByName(name);if(!ws){var key=name.toLowerCase().replace(/[^a-z0-9]/g,"");var all=ss.getSheets();for(var i=0;i<all.length;i++){if(all[i].getName().toLowerCase().replace(/[^a-z0-9]/g,"")===key){ws=all[i];break;}}}if(!ws)throw new Error("Khong tim thay: "+name);var v=ws.getRange(3,1,13,ws.getLastColumn()).getValues();var h=v[0].map(function(x){return String(x).trim();});var months=[];for(var m=1;m<=12;m++){var row=v[m]||[],obj={thang:m};h.forEach(function(k,c){if(!k||c===0)return;var s=String(row[c]).trim().replace(/\s/g,"").replace(/[₫%]/g,"");if(/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s))s=s.replace(/\./g,"").replace(",",".");else if(/^\d+,\d{1,2}$/.test(s))s=s.replace(",",".");else if(/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s))s=s.replace(/,/g,"");var n=parseFloat(s);obj[k]=isNaN(n)?(row[c]===""?null:row[c]):n;});months.push(obj);}return{sheetName:ws.getName(),months:months};}
+function out(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}</pre>
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <button onclick="goPanel(2)" style="padding:8px 20px;border-radius:8px;font-size:12px;font-weight:700;background:linear-gradient(135deg,#5090f8,#a07ff8);color:#fff;border:none;cursor:pointer;font-family:inherit">Tiếp theo →</button>
+      </div>
+    </div>
+    <div id="cp-panel2" style="display:none">
+      <div style="font-size:12px;color:#7878a0;line-height:1.8;margin-bottom:12px">
+        <div style="display:flex;gap:8px;margin-bottom:8px"><span style="background:rgba(160,127,248,.15);color:#a07ff8;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span><span>Nhấn <strong style="color:#eeeef8">Deploy → New deployment</strong></span></div>
+        <div style="display:flex;gap:8px;margin-bottom:8px"><span style="background:rgba(160,127,248,.15);color:#a07ff8;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">4</span><span><strong style="color:#eeeef8">Execute as: Me</strong> &nbsp;·&nbsp; <strong style="color:#eeeef8">Who has access: Anyone</strong> → Deploy</span></div>
+        <div style="display:flex;gap:8px"><span style="background:rgba(160,127,248,.15);color:#a07ff8;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">5</span><span>Cấp quyền → <strong style="color:#eeeef8">Copy URL</strong> kết thúc bằng <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px">/exec</code></span></div>
+      </div>
+      <div style="background:rgba(247,192,64,.07);border:1px solid rgba(247,192,64,.2);border-radius:7px;padding:9px 12px;font-size:11px;color:#f7c840;margin-bottom:12px">⚠️ Google báo "App chưa xác minh" → nhấn <strong>Advanced → Go to ... (unsafe) → Allow</strong></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="goPanel(1)" style="padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#7878a0;cursor:pointer;font-family:inherit">← Quay lại</button>
+        <button onclick="goPanel(3)" style="padding:7px 18px;border-radius:7px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#5090f8,#a07ff8);color:#fff;border:none;cursor:pointer;font-family:inherit">Đã có URL →</button>
+      </div>
+    </div>
+    <div id="cp-panel3" style="display:none">
+      <div style="font-size:12px;color:#7878a0;margin-bottom:9px">Dán URL Web App (kết thúc bằng <code>/exec</code>) vào đây:</div>
+      <input id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec"
+        style="width:100%;background:#0f0f18;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:9px 12px;color:#eeeef8;font-size:11px;font-family:monospace;outline:none;margin-bottom:7px"
+        onfocus="this.style.borderColor='#5090f8'" onblur="this.style.borderColor='rgba(255,255,255,.12)'">
+      <div id="cp-err" style="display:none;color:#f76050;font-size:11px;margin-bottom:7px;padding:6px 10px;background:rgba(247,96,80,.1);border-radius:6px"></div>
+      <div id="cp-ok"  style="display:none;color:#28d880;font-size:11px;margin-bottom:7px;padding:6px 10px;background:rgba(40,216,128,.1);border-radius:6px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button onclick="goPanel(2)" style="padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#7878a0;cursor:pointer;font-family:inherit">← Quay lại</button>
+        <button onclick="testAndSave()" style="padding:7px 18px;border-radius:7px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#28d880,#28ccd8);color:#0a2a18;border:none;cursor:pointer;font-family:inherit">🔗 Kết nối & Tải dữ liệu</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
